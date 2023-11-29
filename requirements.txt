@@ -1,0 +1,7 @@
+dash
+dash_auth
+dash_mantine_components
+Flask
+pandas
+pymongo
+gunicorn
