@@ -104,6 +104,7 @@ app.layout = MantineProvider(
                             max=2000,
                             min=0
                         )],span=4),
+
                     ]
                 ),
                 dcc.Checklist(
