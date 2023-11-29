@@ -29,7 +29,7 @@ app.layout = MantineProvider(
             children=[
                 html.H1("TBC Juleøl Smaking 2023 Scoreboard", style={'textAlign': 'center'}),
                 Grid(
-                    style={'maxWidth': '2200px','maxHeight': '1500px', 'margin': 'auto'},
+                    # style={'maxWidth': '1500px','maxHeight': '1500px', 'margin': 'auto'},
                     gutter="xl",
                     children=[
                         Col(children=[
@@ -43,7 +43,7 @@ app.layout = MantineProvider(
                             label='Default',
                             max=100,
                             min=0
-                        )],span=2),
+                        )],span=4),
                         Col(children=[
                             html.H3("Smak", style={'textAlign': 'center'}),
 
@@ -55,7 +55,7 @@ app.layout = MantineProvider(
                             label='Default',
                             max=100,
                             min=0
-                        )],span=2),
+                        )],span=4),
                         Col(children=[
                             html.H3("Navn på øl", style={'textAlign': 'center'}),
 
@@ -67,7 +67,7 @@ app.layout = MantineProvider(
                             label='Default',
                             max=500,
                             min=0
-                        )],span=2),
+                        )],span=4),
                         Col(children=[
                             html.H3("Øl stil", style={'textAlign': 'center'}),
 
@@ -79,7 +79,7 @@ app.layout = MantineProvider(
                             label='Default',
                             max=500,
                             min=0
-                        )],span=2),
+                        )],span=4),
                         Col(children=[
                             html.H3("Alkohol prosent", style={'textAlign': 'center'}),
 
@@ -91,7 +91,7 @@ app.layout = MantineProvider(
                             label='Default',
                             max=1000,
                             min=0
-                        )],span=2),
+                        )],span=4),
                         Col(children=[
                             html.H3("Total Score", style={'textAlign': 'center'}),
 
@@ -103,7 +103,7 @@ app.layout = MantineProvider(
                             label='Default',
                             max=2000,
                             min=0
-                        )],span=2),
+                        )],span=4),
                     ]
                 ),
                 dcc.Checklist(
