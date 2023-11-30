@@ -183,7 +183,7 @@ def update_rating_scatterplot(n_clicks, fasit, n_intervals):
         for name in all_objects_df['Rytter'].unique():
             df_by_name = all_objects_df[all_objects_df['Rytter'] == name]
             fig.add_trace(go.Scatter(
-                x=df_by_name['Juleøl_nummer'][0:10],
+                x=df_by_name['Juleøl_nummer'][0:13],
                 y=df_by_name['Rating'],
                 mode='lines+markers+text',
                 name=name,
@@ -225,7 +225,7 @@ def update_rating_scatterplot(n_clicks, fasit, n_intervals):
             df_by_name['Total_Score'] = df_by_name['Total_Score'].cumsum()
 
             fig2.add_trace(go.Scatter(
-                x=df_by_name['Juleøl_nummer'][0:10],
+                x=df_by_name['Juleøl_nummer'][0:13],
                 y=df_by_name['Total_Score'],
                 mode='lines+markers+text',
                 name=name,
@@ -280,7 +280,7 @@ def update_rating_scatterplot(n_clicks, fasit, n_intervals):
         for name in all_objects_df['Rytter'].unique():
             df_by_name = all_objects_df[all_objects_df['Rytter'] == name]
             fig.add_trace(go.Scatter(
-                x=df_by_name['Juleøl_nummer'][0:10],
+                x=df_by_name['Juleøl_nummer'][0:13],
                 y=df_by_name['Rating'],
                 mode='lines+markers+text',
                 name=name,
@@ -314,7 +314,7 @@ def update_rating_scatterplot(n_clicks, fasit, n_intervals):
             df_by_name = all_objects_df[all_objects_df['Rytter'] == name]
             df_by_name['Total_Score'] = df_by_name['Total_Score'].cumsum()
             fig2.add_trace(go.Scatter(
-                x=df_by_name['Juleøl_nummer'][0:10],
+                x=df_by_name['Juleøl_nummer'][0:13],
                 y=df_by_name['Total_Score'],
                 mode='lines+markers+text',
                 name=name,
