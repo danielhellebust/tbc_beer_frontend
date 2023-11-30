@@ -29,7 +29,7 @@ app.layout = MantineProvider(
             children=[
                 html.H1("TBC Juleøl Smaking 2023 Scoreboard", style={'textAlign': 'center'}),
                 Grid(
-                    # style={'maxWidth': '1500px','maxHeight': '1500px', 'margin': 'auto'},
+                    style={'maxWidth': '2200px','maxHeight': '1500px', 'margin': 'auto'},
                     gutter="xl",
                     children=[
                         Col(children=[
@@ -225,7 +225,7 @@ def update_rating_scatterplot(n_clicks, fasit, n_intervals):
             df_by_name['Total_Score'] = df_by_name['Total_Score'].cumsum()
 
             fig2.add_trace(go.Scatter(
-                x=df_by_name['Juleøl_nummer'][0:13],
+                x=df_by_name['Juleøl_nummer'],
                 y=df_by_name['Total_Score'],
                 mode='lines+markers+text',
                 name=name,
@@ -241,7 +241,7 @@ def update_rating_scatterplot(n_clicks, fasit, n_intervals):
             yaxis_title='Total_Score',
             showlegend=True,
             yaxis=dict(
-                range=[-1, 1000],  # Set the desired y-axis range
+                range=[-1, 1500],  # Set the desired y-axis range
             ),
             paper_bgcolor='rgb(34, 34, 34)',  # Dark background color
             plot_bgcolor='white',
@@ -280,7 +280,7 @@ def update_rating_scatterplot(n_clicks, fasit, n_intervals):
         for name in all_objects_df['Rytter'].unique():
             df_by_name = all_objects_df[all_objects_df['Rytter'] == name]
             fig.add_trace(go.Scatter(
-                x=df_by_name['Juleøl_nummer'][0:13],
+                x=df_by_name['Juleøl_nummer'],
                 y=df_by_name['Rating'],
                 mode='lines+markers+text',
                 name=name,
@@ -314,7 +314,7 @@ def update_rating_scatterplot(n_clicks, fasit, n_intervals):
             df_by_name = all_objects_df[all_objects_df['Rytter'] == name]
             df_by_name['Total_Score'] = df_by_name['Total_Score'].cumsum()
             fig2.add_trace(go.Scatter(
-                x=df_by_name['Juleøl_nummer'][0:13],
+                x=df_by_name['Juleøl_nummer'],
                 y=df_by_name['Total_Score'],
                 mode='lines+markers+text',
                 name=name,
@@ -330,7 +330,7 @@ def update_rating_scatterplot(n_clicks, fasit, n_intervals):
             yaxis_title='Total_Score',
             showlegend=True,
             yaxis=dict(
-                range=[-1, 1000],  # Set the desired y-axis range
+                range=[-1, 1500],  # Set the desired y-axis range
             ),
             paper_bgcolor='rgb(34, 34, 34)',  # Dark background color
             plot_bgcolor='white',
