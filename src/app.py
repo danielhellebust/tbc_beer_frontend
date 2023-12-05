@@ -8,6 +8,8 @@ from dash_mantine_components import MantineProvider, Container, Grid, Col
 import dash_mantine_components
 from dash import dcc
 import dash_daq as daq
+import numpy as np
+
 
 # MongoDB connection
 client = pymongo.MongoClient("mongodb+srv://beer:beer@cluster0.rhshz.mongodb.net/")  # Replace with your MongoDB connection string
@@ -127,7 +129,7 @@ app.layout = MantineProvider(
 
                 dcc.Interval(
                     id='interval-component',
-                    interval=10 * 1000,  # in milliseconds
+                    interval=10 * 9000,  # in milliseconds
                     n_intervals=0
                 ),
             ],
@@ -176,7 +178,14 @@ def update_rating_scatterplot(n_clicks, fasit, n_intervals):
         df_sum_score_alcohol = all_objects_df.groupby(['Rytter'])['Alcohol_Score'].sum().to_frame().reset_index()
         df_sum_score_total = all_objects_df[all_objects_df['Rytter'] != "Fasit"].groupby(['Rytter'])['Total_Score'].sum().to_frame().reset_index()
 
-        print(df_sum_score_total.head())
+        max_score_aroma_name = df_sum_score_aroma[df_sum_score_aroma['Aroma_Score'] == df_sum_score_aroma['Aroma_Score'].max()]['Rytter'].values[0]
+        max_score_style_name = df_sum_score_style[df_sum_score_style['Style_Score'] == df_sum_score_style['Style_Score'].max()]['Rytter'].values[0]
+        max_score_taste_name = df_sum_score_taste[df_sum_score_taste['Taste_Score'] == df_sum_score_taste['Taste_Score'].max()]['Rytter'].values[0]
+        max_score_name_name = df_sum_score_name[df_sum_score_name['Name_Score'] == df_sum_score_name['Name_Score'].max()]['Rytter'].values[0]
+        max_score_alcohol_name = df_sum_score_alcohol[df_sum_score_alcohol['Alcohol_Score'] == df_sum_score_alcohol['Alcohol_Score'].max()]['Rytter'].values[0]
+        max_score_total_name = df_sum_score_total[df_sum_score_total['Total_Score'] == df_sum_score_total['Total_Score'].max()]['Rytter'].values[0]
+
+
 
         # Create a scatter plot with separate traces for each beer
         fig = go.Figure()
@@ -192,13 +201,6 @@ def update_rating_scatterplot(n_clicks, fasit, n_intervals):
                 line=dict(width=4),  # Set the line thickness
                 marker=dict(size=12),  # Set the marker size
             ))
-        # fig.add_trace(go.Scatter(
-        #     {
-        #         'x': [1, 2, 3, 4, 5, 6, 7, 8, 9,10],
-        #         'y': [0, 0, 0, 0, 0, 0,0, 0, 0, 0],
-        #         'mode': 'lines+markers+text',
-        #         'name': 'Fasit'
-        #     }))
 
         fig.update_layout(
             title='Rating per øl',
@@ -219,45 +221,58 @@ def update_rating_scatterplot(n_clicks, fasit, n_intervals):
 
         )
 
+        # Create a horizontal bar chart with separate traces for each rider
         fig2 = go.Figure()
-        for name in all_objects_df['Rytter'].unique():
-            df_by_name = all_objects_df[all_objects_df['Rytter'] == name]
-            df_by_name['Total_Score'] = df_by_name['Total_Score'].cumsum()
 
-            fig2.add_trace(go.Scatter(
-                x=df_by_name['Juleøl_nummer'],
-                y=df_by_name['Total_Score'],
-                mode='lines+markers+text',
+        # Sort by total score in descending order
+        sorted_names = df_sum_score_total.sort_values(by='Total_Score', ascending=True)['Rytter'].tolist()
+
+        for name in sorted_names:
+            df_by_name = all_objects_df[all_objects_df['Rytter'] == name]
+            total_scores = df_by_name['Total_Score'].cumsum()
+
+            # Use a different color for each rider
+            color = 'rgba(' + ', '.join(str(c) for c in np.random.randint(0, 256, 3)) + ', 0.6)'
+
+            fig2.add_trace(go.Bar(
+                y=[name],
+                x=[total_scores.iloc[-1]],
+                orientation='h',
+                text=[total_scores.iloc[-1]],
                 name=name,
-                text=df_by_name['Total_Score'],
-                textposition='top center',
-                line=dict(width=4),  # Set the line thickness
-                marker=dict(size=12),  # Set the marker size
+                textposition='auto',
+                marker=dict(
+                    color=color,
+                    line=dict(
+                        color='rgba(50, 171, 96, 1.0)',
+                        width=2,
+                    )
+                )
             ))
 
+        # Update the layout for the horizontal bar chart
         fig2.update_layout(
             title='Total Score',
-            xaxis_title='Juleøl_nummer',
-            yaxis_title='Total_Score',
+            xaxis_title='Total Score',
+            yaxis_title='Rytter',
             showlegend=True,
-            yaxis=dict(
-                range=[-1, 1500],  # Set the desired y-axis range
+            xaxis=dict(
+                range=[-1, 1500],  # Set the desired x-axis range
             ),
             paper_bgcolor='rgb(34, 34, 34)',  # Dark background color
             plot_bgcolor='white',
-            height=700,  # Dark background color
+            height=700,
             font=dict(
-                family='Helvetica',  # You can change the font family
-                size=16,  # Adjust the font size as needed
-                color='grey',  # Font color
+                family='Helvetica',
+                size=16,
+                color='grey',
             )
         )
 
         return (fig,fig2, df_sum_score_aroma['Aroma_Score'].max(), df_sum_score_taste['Taste_Score'].max(),
                 df_sum_score_name['Name_Score'].max(), df_sum_score_style['Style_Score'].max(),
                 df_sum_score_alcohol['Alcohol_Score'].max(), df_sum_score_total['Total_Score'].max(),
-                df_sum_score_aroma['Rytter'][0], df_sum_score_taste['Rytter'][0], df_sum_score_name['Rytter'][0],
-                df_sum_score_style['Rytter'][0], df_sum_score_alcohol['Rytter'][0], df_sum_score_total['Rytter'][0])
+                max_score_aroma_name, max_score_taste_name,max_score_name_name,max_score_style_name,max_score_alcohol_name,max_score_total_name)
 
     else:
         # Determine the range of beer numbers based on the current layout
@@ -274,6 +289,24 @@ def update_rating_scatterplot(n_clicks, fasit, n_intervals):
         df_sum_score_name = all_objects_df.groupby(['Rytter'])['Name_Score'].sum().to_frame().reset_index()
         df_sum_score_alcohol = all_objects_df.groupby(['Rytter'])['Alcohol_Score'].sum().to_frame().reset_index()
         df_sum_score_total = all_objects_df[all_objects_df['Rytter'] != "Fasit"].groupby(['Rytter'])['Total_Score'].sum().to_frame().reset_index()
+
+        max_score_aroma_name = \
+        df_sum_score_aroma[df_sum_score_aroma['Aroma_Score'] == df_sum_score_aroma['Aroma_Score'].max()][
+            'Rytter'].values[0]
+        max_score_style_name = \
+        df_sum_score_style[df_sum_score_style['Style_Score'] == df_sum_score_style['Style_Score'].max()][
+            'Rytter'].values[0]
+        max_score_taste_name = \
+        df_sum_score_taste[df_sum_score_taste['Taste_Score'] == df_sum_score_taste['Taste_Score'].max()][
+            'Rytter'].values[0]
+        max_score_name_name = \
+        df_sum_score_name[df_sum_score_name['Name_Score'] == df_sum_score_name['Name_Score'].max()]['Rytter'].values[0]
+        max_score_alcohol_name = \
+        df_sum_score_alcohol[df_sum_score_alcohol['Alcohol_Score'] == df_sum_score_alcohol['Alcohol_Score'].max()][
+            'Rytter'].values[0]
+        max_score_total_name = \
+        df_sum_score_total[df_sum_score_total['Total_Score'] == df_sum_score_total['Total_Score'].max()][
+            'Rytter'].values[0]
 
         # Create a scatter plot with separate traces for each beer
         fig = go.Figure()
@@ -309,42 +342,58 @@ def update_rating_scatterplot(n_clicks, fasit, n_intervals):
             )
         )
 
+
+        # Create a horizontal bar chart with separate traces for each rider
         fig2 = go.Figure()
-        for name in all_objects_df['Rytter'].unique():
+
+        # Sort by total score in descending order
+        sorted_names = df_sum_score_total.sort_values(by='Total_Score', ascending=True)['Rytter'].tolist()
+
+        for name in sorted_names:
             df_by_name = all_objects_df[all_objects_df['Rytter'] == name]
-            df_by_name['Total_Score'] = df_by_name['Total_Score'].cumsum()
-            fig2.add_trace(go.Scatter(
-                x=df_by_name['Juleøl_nummer'],
-                y=df_by_name['Total_Score'],
-                mode='lines+markers+text',
+            total_scores = df_by_name['Total_Score'].cumsum()
+
+            # Use a different color for each rider
+            color = 'rgba(' + ', '.join(str(c) for c in np.random.randint(0, 256, 3)) + ', 0.6)'
+
+            fig2.add_trace(go.Bar(
+                y=[name],
+                x=[total_scores.iloc[-1]],
+                orientation='h',
+                text=[total_scores.iloc[-1]],
                 name=name,
-                text=df_by_name['Total_Score'],
-                textposition='top center',
-                line=dict(width=4),  # Set the line thickness
-                marker=dict(size=12),  # Set the marker size
+                textposition='auto',
+                marker=dict(
+                    color=color,
+                    line=dict(
+                        color='rgba(50, 171, 96, 1.0)',
+                        width=2,
+                    )
+                )
             ))
 
+        # Update the layout for the horizontal bar chart
         fig2.update_layout(
             title='Total Score',
-            xaxis_title='Juleøl_nummer',
-            yaxis_title='Total_Score',
+            xaxis_title='Total Score',
+            yaxis_title='Rytter',
             showlegend=True,
-            yaxis=dict(
-                range=[-1, 1500],  # Set the desired y-axis range
+            xaxis=dict(
+                range=[-1, 1500],  # Set the desired x-axis range
             ),
             paper_bgcolor='rgb(34, 34, 34)',  # Dark background color
             plot_bgcolor='white',
-            height=700,  # Dark background color
+            height=700,
             font=dict(
-                family='Helvetica',  # You can change the font family
-                size=16,  # Adjust the font size as needed
-                color='grey',  # Font color
+                family='Helvetica',
+                size=16,
+                color='grey',
             )
         )
 
         return (fig,fig2, df_sum_score_aroma['Aroma_Score'].max(), df_sum_score_taste['Taste_Score'].max(), df_sum_score_name['Name_Score'].max(),df_sum_score_style['Style_Score'].max(), df_sum_score_alcohol['Alcohol_Score'].max(),
                 df_sum_score_total['Total_Score'].max(),
-                df_sum_score_aroma['Rytter'][0], df_sum_score_taste['Rytter'][0], df_sum_score_name['Rytter'][0], df_sum_score_style['Rytter'][0], df_sum_score_alcohol['Rytter'][0], df_sum_score_total['Rytter'][0])
+                max_score_aroma_name, max_score_taste_name,max_score_name_name,max_score_style_name,max_score_alcohol_name,max_score_total_name)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
