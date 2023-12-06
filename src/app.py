@@ -29,7 +29,7 @@ app.layout = MantineProvider(
     children=[
         Container(
             children=[
-                html.H1("TBC Juleøl Smaking 2023 Scoreboard", style={'textAlign': 'center'}),
+                html.H1("Alpingutu 76 Juleøl Smaking 2023 Scoreboard", style={'textAlign': 'center'}),
                 Grid(
                     style={'maxWidth': '2200px','maxHeight': '1500px', 'margin': 'auto'},
                     gutter="xl",
